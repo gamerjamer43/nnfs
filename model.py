@@ -1,19 +1,20 @@
 # a kinda accurate pretty cool neural network from scratch
 import numpy as np
 
+# needed functions
 def sigmoid(x):
     """### sigmoid activation
     x: input array"""
     return 1 / (1 + np.exp(-x))
 
 def dsigmoid(x):
-    """## derivative of the sigmoid function
+    """### derivative of the sigmoid function
     x: input array"""
     s = sigmoid(x)
     return s * (1 - s)
 
 def softmax(x):
-    """## softmax activation with numerical stability
+    """### softmax activation with numerical stability
     x: input array (shape: (m, num_classes))"""
     # subtract max for numerical stability
     exp_x = np.exp(x - np.max(x, axis=1, keepdims=True))
@@ -21,7 +22,7 @@ def softmax(x):
 
 def centropy(y_true, y_pred):
     """
-    computes cross-entropy loss.
+    ### computes cross-entropy loss.
     y_true: integer labels (shape: (m,))
     y_pred: predicted probabilities (shape: (m, num_classes))
     """
@@ -29,6 +30,7 @@ def centropy(y_true, y_pred):
     log_probs = -np.log(y_pred[np.arange(m), y_true] + 1e-9)
     return np.sum(log_probs) / m
 
+# the actual dense layer
 class Dense:
     """
     a fully connected (dense) layer.
@@ -44,7 +46,7 @@ class Dense:
         self.activation = activation
 
     def forward(self, x):
-        """forward pass; saves input and linear output for backprop."""
+        """### forward pass; saves input and linear output for backprop."""
         self.x = x
         self.z = np.dot(x, self.W) + self.b
         if self.activation == 'sigmoid':
@@ -55,7 +57,7 @@ class Dense:
 
     def backward(self, grad_output):
         """
-        backward pass.
+        ### backward pass.
         grad_output: gradient of loss with respect to this layer's output.
         returns gradient with respect to the layer input.
         """

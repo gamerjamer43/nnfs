@@ -3,12 +3,14 @@ import matplotlib.pyplot as plt
 from PIL import Image
 import os
 
+# colored prints
+from rich import print
+
 # numerical operations
 import numpy as np
 
 # get dense and softmax (the layer and activation function) from model.py
 from model import Dense, softmax
-
 
 class NeuralApp:
     """
@@ -16,10 +18,9 @@ class NeuralApp:
     """
     def __init__(self, model_path='model/model.npz', input_dim=784, hidden_dim=128, output_dim=10):
         data = np.load(model_path)
-        # Build layers with the same architecture used during training.
+        # build layers with the same architecture used during training, and load saved weights and biases
         self.layer1 = Dense(input_dim, hidden_dim, activation='sigmoid')
         self.layer2 = Dense(hidden_dim, output_dim=10, activation=None)
-        # Load saved parameters.
         self.layer1.W = data['W1']
         self.layer1.b = data['b1']
         self.layer2.W = data['W2']
@@ -57,7 +58,7 @@ def get_random_mnist_sample(csv_path='datasets/mnist_train.csv', index=None, sav
 
 def load_saved_image(image_path='image.png'):
     """
-    Loads an existing image, processes it, and returns a flattened vector.
+    loads an existing image, processes it, and returns a flattened vector.
     """
     img = Image.open(image_path).convert('L')  # convert to grayscale
     img = img.resize((28, 28))
@@ -66,17 +67,17 @@ def load_saved_image(image_path='image.png'):
 
 if __name__ == '__main__':
     if os.path.exists('image.png'):
-        print("Using saved image.png for prediction.")
+        print("[green]Using saved image.png for prediction.[/green]")
         image_flat = load_saved_image()
         true_label = None  # unknown since it's a user-provided image
     else:
-        print("No saved image found. Using a random MNIST sample.")
+        print("[yellow]No saved image found. Using a random MNIST sample.[/yellow]")
         image_flat, true_label = get_random_mnist_sample()
 
     # show the selected digit
     plt.imshow(image_flat.reshape(28, 28), cmap='gray')
     if true_label is not None:
-        plt.title(f"Actual: {true_label}")
+        plt.title(f"[green]Actual: {true_label}[/green]")
     plt.show()
     
     # run prediction
@@ -84,6 +85,6 @@ if __name__ == '__main__':
     prediction = app.predict(image_flat)
     
     if true_label is not None:
-        print(f"Predicted Digit: {prediction} | Actual Digit: {true_label}")
+        print(f"[blue]Predicted Digit: {prediction} | Actual Digit: {true_label}[/blue]")
     else:
-        print(f"Predicted Digit: {prediction}")
+        print(f"[blue]Predicted Digit: {prediction}[/blue]")

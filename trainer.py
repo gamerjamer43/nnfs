@@ -1,7 +1,10 @@
 # the big boy, needed for almost every operation
 import numpy as np
 
-# other imports from model, dense (a full dense layer), centropy (cross entropy), softmax (activation function)
+# also colored prints lol
+from rich import print
+
+# lastly, other imports from model, dense (a full dense layer), centropy (cross entropy), softmax (activation function)
 from model import Dense, centropy, softmax
 
 def load_data(file_path):
@@ -23,7 +26,7 @@ class Trainer:
         self.layer2 = Dense(hidden_dim, output_dim, activation=None)
 
     def forward(self, X) -> np.ndarray:
-        """Forward propagation through both layers."""
+        """forward propagation through both layers."""
         a1 = self.layer1.forward(X)
         z2 = self.layer2.forward(a1)
         self.out = softmax(z2)
@@ -34,15 +37,15 @@ class Trainer:
         backprop and parameter updates.
         """
         m = X.shape[0]
-        # For softmax with cross-entropy, gradient simplifies to:
+        # for softmax with cross-entropy, gradient simplifies to:
         grad_out = self.out.copy()
         grad_out[np.arange(m), y] -= 1
         grad_out /= m
-
+        
+        # gradient w.r.t. layer2 output
         grad_hidden = self.layer2.backward(grad_out)
         self.layer1.backward(grad_hidden)
 
-        # Update weights and biases
         self.layer2.update(lr)
         self.layer1.update(lr)
 
@@ -52,12 +55,12 @@ class Trainer:
         """
         n = X.shape[0]
         for epoch in range(epochs):
-            # Shuffle data
+            # shuffle data
             indices = np.arange(n)
             np.random.shuffle(indices)
             X_shuffled, y_shuffled = X[indices], y[indices]
             
-            # Mini-batch training
+            # train using batches (default 64 per batch)
             for i in range(0, n, batch_size):
                 X_batch = X_shuffled[i:i+batch_size]
                 y_batch = y_shuffled[i:i+batch_size]
@@ -65,7 +68,7 @@ class Trainer:
                 loss = centropy(y_batch, self.out)
                 self.backward(X_batch, y_batch, lr)
             
-            # Compute full training loss and accuracy
+            # compute full training loss and accuracy, and print it out
             output = self.forward(X)
             loss = centropy(y, output)
             preds = np.argmax(output, axis=1)
