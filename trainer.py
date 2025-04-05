@@ -90,7 +90,7 @@ def main() -> None:
     # load trainer and params
     trainer = Trainer()
     print("Training network...")
-    trainer.train(X, y, epochs=200, lr=0.1, batch_size=64)
+    trainer.train(X, y, epochs=250, lr=0.1, batch_size=64)
     print("Training complete.")
 
     # save model to model.npz
